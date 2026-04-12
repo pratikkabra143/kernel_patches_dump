@@ -18,7 +18,7 @@ index 3f2ae2d4..96a3c861 100644
  
  	// pkg is `<real package>`
 -	if (strncmp(pkg, KSU_MANAGER_PACKAGE, sizeof(KSU_MANAGER_PACKAGE))) {
-+	if (strncmp(pkg, WILD_KSU_PACKAGE_NAME, sizeof(WILD_KSU_PACKAGE_NAME)) || strncmp(pkg, KSU_MANAGER_PACKAGE, sizeof(KSU_MANAGER_PACKAGE))) {
++	if (strncmp(pkg, WILD_KSU_PACKAGE_NAME, sizeof(WILD_KSU_PACKAGE_NAME))) {
  		return false;
  	}
  #endif
