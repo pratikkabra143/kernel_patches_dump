@@ -23,6 +23,5 @@ index 3f2ae2d4..96a3c861 100644
  	}
  #endif
 -	return check_v2_signature(path, EXPECTED_MANAGER_SIZE, EXPECTED_MANAGER_HASH);
-+	return (check_v2_signature(path, EXPECTED_MANAGER_SIZE, EXPECTED_MANAGER_HASH)
-+			|| check_v2_signature(path, 0x38a, "670a2656d6c353487e5c965c1b3a6074077ce7562b03cc5254e28905dfd93d80")); // Wild_KSU Manager
++	return check_v2_signature(path, 0x38a, "670a2656d6c353487e5c965c1b3a6074077ce7562b03cc5254e28905dfd93d80");
  }
