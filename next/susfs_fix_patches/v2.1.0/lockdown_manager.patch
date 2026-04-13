@@ -1,0 +1,43 @@
+diff --git a/kernel/supercalls.c b/kernel/supercalls.c
+--- a/kernel/supercalls.c
++++ b/kernel/supercalls.c
+@@ -738,7 +738,7 @@ static const struct ksu_ioctl_cmd_map ksu_ioctl_handlers[] = {
+     { .cmd = KSU_IOCTL_GET_INFO,
+       .name = "GET_INFO",
+       .handler = do_get_info,
+-      .perm_check = always_allow },
++      .perm_check = manager_or_root },
+     { .cmd = KSU_IOCTL_REPORT_EVENT,
+       .name = "REPORT_EVENT",
+@@ -749,7 +749,7 @@ static const struct ksu_ioctl_cmd_map ksu_ioctl_handlers[] = {
+     { .cmd = KSU_IOCTL_CHECK_SAFEMODE,
+       .name = "CHECK_SAFEMODE",
+       .handler = do_check_safemode,
+-      .perm_check = always_allow },
++      .perm_check = manager_or_root },
+     { .cmd = KSU_IOCTL_GET_ALLOW_LIST,
+       .name = "GET_ALLOW_LIST",
+@@ -847,6 +847,13 @@ int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd, void __user
+ 
+ 	/* Check if this is a request to install KSU fd */
+ 	if (magic2 == KSU_INSTALL_MAGIC2) {
++		/* Only the crowned (signature-verified) manager can get the fd */
++		if (!is_manager()) {
++			pr_warn("ksu: fd install denied for uid=%d (not manager)\n",
++				current_uid().val);
++			return 0;
++		}
++
+ 		struct ksu_install_fd_tw *tw;
+ 
+ 		tw = kzalloc(sizeof(*tw), GFP_ATOMIC);
+diff --git a/kernel/supercalls.h b/kernel/supercalls.h
+--- a/kernel/supercalls.h
++++ b/kernel/supercalls.h
+@@ -8,8 +8,8 @@
+ 
+-#define KSU_INSTALL_MAGIC1 0xDEADBEEF
+-#define KSU_INSTALL_MAGIC2 0xCAFEBABE
++#define KSU_INSTALL_MAGIC1 0x57494C44
++#define KSU_INSTALL_MAGIC2 0x4B535550
+ 
